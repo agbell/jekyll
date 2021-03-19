@@ -17,6 +17,27 @@ test:
     RUN script/cucumber
     RUN script/default-site
 
+cucumber-i:
+    FROM +deps
+    RUN --interactive /bin/bash
+    # RUN --no-cache bundle exec cucumber features/theme_gem.feature
+
+cucumber:
+    FROM +deps
+    ENV JRUBY_OPTS="--dev -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:CompileThreshold=10 -J-XX:ReservedCodeCacheSize=128M -G"
+    RUN --no-cache bundle exec cucumber features/theme_gem.feature
+
+cucumber-nailgun:
+    FROM +deps
+    RUN curl -L http://drip.flatland.org > ~/bin/drip
+    RUN chmod 755 ~/bin/drip
+    RUN export JAVACMD=`which drip`
+    RUN export DRIP_INIT_CLASS=org.jruby.main.DripMain
+    RUN export DRIP_INIT_CLASS=org.jruby.main.DripMain
+    RUN export DRIP_INIT=""
+    ENV JRUBY_OPTS="--dev -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:CompileThreshold=10 -J-XX:ReservedCodeCacheSize=128M -G"
+    RUN --no-cache bundle exec cucumber features/theme_gem.feature
+
 style-check:
     FROM +deps
     RUN script/fmt
@@ -33,6 +54,7 @@ deps:
     ARG RUBY=3.0
     IF case $RUBY in jruby*) ;; *) false; esac
         FROM $RUBY
+        ENV JRUBY_OPTS="--dev -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:CompileThreshold=10 -J-XX:ReservedCodeCacheSize=128M -G"
         RUN echo "FROM $RUBY"
     ELSE
         FROM ruby:$RUBY
