@@ -13,6 +13,7 @@ all:
 # Run with specific version: `earthly --build-arg RUBY=2.5 +test`
 test:
     FROM +deps
+    ENV JRUBY_OPTS="--dev -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:CompileThreshold=10 -J-XX:ReservedCodeCacheSize=128M -G"
     RUN script/test    
     RUN script/cucumber
     RUN script/default-site
@@ -54,7 +55,6 @@ deps:
     ARG RUBY=3.0
     IF case $RUBY in jruby*) ;; *) false; esac
         FROM $RUBY
-        ENV JRUBY_OPTS="--dev -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:CompileThreshold=10 -J-XX:ReservedCodeCacheSize=128M -G"
         RUN echo "FROM $RUBY"
     ELSE
         FROM ruby:$RUBY
