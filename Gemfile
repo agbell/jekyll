@@ -34,6 +34,7 @@ group :test do
   gem "test-theme-symlink", :path => File.expand_path("test/fixtures/test-theme-symlink", __dir__)
 
   gem "jruby-openssl" if RUBY_ENGINE == "jruby"
+  gem "parallel_tests" if RUBY_ENGINE == "jruby"
 end
 
 #
