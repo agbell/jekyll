@@ -13,9 +13,13 @@ all:
 # Run with specific version: `earthly --build-arg RUBY=2.5 +test`
 test:
     FROM +deps
-    RUN script/test    
-    RUN script/cucumber
-    RUN script/default-site
+    # RUN script/test    
+    # Right here:
+    # This is not working, its running every test
+    RUN find features/*  | xargs  -n 2 -P 2  --verbose ruby -S bundle exec cucumber --format progress --publish #
+    # RUN ls features | xargs "ruby -S bundle exec cucumber --format progress --publish {}"
+    # RUN script/cucumber
+    # RUN script/default-site
 
 cucumber-i:
     FROM +deps
